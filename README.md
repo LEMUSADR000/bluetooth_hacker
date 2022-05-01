@@ -1,6 +1,6 @@
 # bluetooth_hacker
 
-Bluetooth service finder with psuedo-scripting capabilities.
+Bluetooth Low-Energy service finder with psuedo-scripting capabilities.
 
 ## Getting Started
 
