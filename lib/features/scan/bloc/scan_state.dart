@@ -1,24 +1,14 @@
 part of 'scan_bloc.dart';
 
-abstract class ScanState {
-  SplayTreeMap<String, DiscoveredDevice> get scanResults;
-  set scanResults(SplayTreeMap<String, DiscoveredDevice> scanResult);
-}
+@freezed
+class ScanState with _$ScanState {
+  const factory ScanState.scanning({
+    required Map<String, DiscoveredDevice> scanResults,
+    required List<String> ids,
+  }) = Scanning;
 
-class Scanning implements ScanState {
-  Scanning()
-      : scanResults = SplayTreeMap(),
-        super();
-
-  @override
-  SplayTreeMap<String, DiscoveredDevice> scanResults;
-}
-
-class StoppedScanning implements ScanState {
-  StoppedScanning()
-      : scanResults = SplayTreeMap(),
-        super();
-
-  @override
-  SplayTreeMap<String, DiscoveredDevice> scanResults;
+  const factory ScanState.notScanning({
+    @Default({}) Map<String, DiscoveredDevice> scanResults,
+    @Default([]) List<String> ids,
+  }) = NotScanning;
 }

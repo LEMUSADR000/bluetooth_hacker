@@ -1,11 +1,7 @@
 part of 'scan_bloc.dart';
 
-abstract class ScanEvent {}
-
-class StartScan implements ScanEvent {
-  const StartScan();
-}
-
-class StopScan implements ScanEvent {
-  const StopScan();
+@freezed
+class ScanEvent with _$ScanEvent {
+  const factory ScanEvent.startScan() = StartScan;
+  const factory ScanEvent.stopScan() = StopScan;
 }

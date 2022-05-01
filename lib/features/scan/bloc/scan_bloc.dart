@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:bluetooth_hacker/services/ble/i_ble.dart';
 import 'package:bluetooth_hacker/utils/log.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'scan_bloc.freezed.dart';
 part 'scan_event.dart';
 part 'scan_state.dart';
 
@@ -15,7 +16,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
 
   ScanBloc({required Ble ble})
       : _ble = ble,
-        super(StoppedScanning()) {
+        super(const ScanState.notScanning()) {
     on<StartScan>(_startScan);
     on<StopScan>(_stopScan);
   }
@@ -28,13 +29,24 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
 
     try {
       _scanResultsSubscription = _ble.startScan().listen((device) {
-        emit(
-          Scanning()..scanResults = (state.scanResults..[device.id] = device),
-        );
+        final Map<String, DiscoveredDevice> discovered = {
+          ...state.scanResults,
+          device.id: device,
+        };
+
+        final List<String> ids = [...state.ids, device.id];
+
+        emit(ScanState.scanning(
+          scanResults: discovered,
+          ids: ids,
+        ));
       });
     } catch (e, stacktrace) {
       Log.e('Unable to start scan $e', stackTrace: stacktrace);
-      emit(StoppedScanning()..scanResults = state.scanResults);
+      emit(ScanState.notScanning(
+        scanResults: state.scanResults,
+        ids: state.ids,
+      ));
     }
   }
 
@@ -45,7 +57,10 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       Log.e('Unable to stop scanning $e', stackTrace: stacktrace);
     }
 
-    emit(StoppedScanning()..scanResults = state.scanResults);
+    emit(ScanState.notScanning(
+      scanResults: state.scanResults,
+      ids: state.ids,
+    ));
   }
 
   @override
