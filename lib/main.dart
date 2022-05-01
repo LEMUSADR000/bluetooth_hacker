@@ -1,6 +1,5 @@
-import 'package:bluetooth_hacker/app/application.dart';
-import 'package:flutter/material.dart';
+import 'package:bluetooth_hacker/entry_point.dart';
 
-void main() {
-  runApp(const Application());
+Future<void> main() async {
+  await EntryPoint.main();
 }
