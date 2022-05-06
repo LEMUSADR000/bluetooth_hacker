@@ -14,7 +14,7 @@ abstract class Ble {
   Stream<ConnectionStateUpdate> get connectedDeviceStream;
   Stream<BleStatus> get statusStream;
 
-  Stream<DiscoveredDevice> startScan();
+  Stream<DiscoveredDevice> startScan({required List<Uuid> services});
 
   BleClient connectToDevice(
     DiscoveredDevice discoveredDevice, {

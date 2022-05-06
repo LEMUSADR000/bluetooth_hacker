@@ -7,10 +7,13 @@ import 'package:bluetooth_hacker/utils/log.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 abstract class EntryPoint {
   static Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+    final WidgetsBinding widgetsBinding =
+        WidgetsFlutterBinding.ensureInitialized();
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
     // Disables landscape mode
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -21,7 +24,10 @@ abstract class EntryPoint {
         await getIt.allReady(timeout: const Duration(seconds: 10));
 
         return BlocOverrides.runZoned(
-          () => runApp(const Application()),
+          () {
+            runApp(const Application());
+            FlutterNativeSplash.remove();
+          },
           blocObserver: AppBlocObserver(),
         );
 

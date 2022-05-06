@@ -1,4 +1,5 @@
 import 'package:bluetooth_hacker/features/scan/bloc/scan_bloc.dart';
+import 'package:bluetooth_hacker/global/ble_state/cubit/ble_state_cubit.dart';
 import 'package:bluetooth_hacker/services/ble/c_ble.dart';
 import 'package:bluetooth_hacker/services/ble/i_ble.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -12,6 +13,9 @@ extension GetItExtension on GetIt {
       // Blocs
       ..registerLazySingleton<ScanBloc>(
         () => ScanBloc(ble: getIt()),
+      )
+      ..registerLazySingleton<BleStateCubit>(
+        () => BleStateCubit(ble: getIt()),
       )
 
       // Services

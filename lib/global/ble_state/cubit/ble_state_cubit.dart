@@ -26,8 +26,7 @@ class BleStateCubit extends Cubit<BleState> {
     Log.d('BLE STATE CHANGED: $update');
 
     if (update == BleStatus.ready) {
-      // TODO(Adrian): CALCULATE WHETHER WE STILL NEED PERMISSIONS
-      emit(const BleState.ready(needsPermissions: false));
+      emit(const BleState.ready());
     } else {
       emit(BleState.error(errorState: update));
     }

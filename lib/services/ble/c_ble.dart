@@ -11,11 +11,11 @@ class ConcreteBle implements Ble {
 
   // Private Fields
   final FlutterReactiveBle _flutterReactiveBle;
-  static const String _clientUuidString =
-      '00002902-0000-1000-8000-00805f9b34fb';
-  final Uuid _serviceUuid = Uuid.parse('deca0001-10c7-43a8-8c9f-42b70e03808d');
-  final Uuid _rxUuid = Uuid.parse('deca0003-10c7-43a8-8c9f-42b70e03808d');
-  final Uuid _txUuid = Uuid.parse('deca0002-10c7-43a8-8c9f-42b70e03808d');
+  // static const String _clientUuidString =
+  //     '00002902-0000-1000-8000-00805f9b34fb';
+  // final Uuid _serviceUuid = Uuid.parse('deca0001-10c7-43a8-8c9f-42b70e03808d');
+  // final Uuid _rxUuid = Uuid.parse('deca0003-10c7-43a8-8c9f-42b70e03808d');
+  // final Uuid _txUuid = Uuid.parse('deca0002-10c7-43a8-8c9f-42b70e03808d');
 
   @override
   BleClient connectToDevice(
@@ -25,36 +25,19 @@ class ConcreteBle implements Ble {
     final Stream<ConnectionStateUpdate> heart =
         _flutterReactiveBle.connectToDevice(
       id: discoveredDevice.id,
-      servicesWithCharacteristicsToDiscover: {
-        _serviceUuid: [_txUuid, _rxUuid]
-      },
       connectionTimeout: connectionTimeout,
     );
-
-    final QualifiedCharacteristic rx = QualifiedCharacteristic(
-      serviceId: _serviceUuid,
-      characteristicId: _rxUuid,
-      deviceId: discoveredDevice.id,
-    );
-
-    return BleClient(
-      device: discoveredDevice,
-      rx: rx,
-      lifeline: heart,
-    );
+    return BleClient(device: discoveredDevice, lifeline: heart);
   }
 
   @override
   Future<void> initializeCommunication(BleClient client) async {
-    final Stream<List<int>> rxStream =
-        _flutterReactiveBle.subscribeToCharacteristic(client.rx);
-
     final mtu = await _flutterReactiveBle.requestMtu(
       deviceId: client.device.id,
       mtu: 247,
     );
 
-    client.initializeCommunications(rxStream, mtu);
+    client.initializeCommunications(mtu);
   }
 
   @override
@@ -65,9 +48,11 @@ class ConcreteBle implements Ble {
   Stream<BleStatus> get statusStream => _flutterReactiveBle.statusStream;
 
   @override
-  Stream<DiscoveredDevice> startScan() {
+  Stream<DiscoveredDevice> startScan({
+    required List<Uuid> services,
+  }) {
     return _flutterReactiveBle.scanForDevices(
-      withServices: [_serviceUuid],
+      withServices: services,
       scanMode: ScanMode.lowPower,
     );
   }

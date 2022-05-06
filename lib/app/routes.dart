@@ -1,10 +1,10 @@
-import 'package:bluetooth_hacker/features/scan/scan_page.dart';
+import 'package:bluetooth_hacker/features/scan/scan_view.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class AppRoutes {
-  static String initialRoute = ScanPage.routeName;
+  static String initialRoute = ScanView.routeName;
 
   static Map<String, WidgetBuilder> routes = {
-    ScanPage.routeName: ScanPage.create,
+    ScanView.routeName: ScanView.create,
   };
 }

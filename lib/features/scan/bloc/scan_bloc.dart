@@ -28,7 +28,9 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     }
 
     try {
-      _scanResultsSubscription = _ble.startScan().listen((device) {
+      _scanResultsSubscription = _ble
+          .startScan(services: event.services.map(Uuid.parse).toList())
+          .listen((device) {
         final Map<String, DiscoveredDevice> discovered = {
           ...state.scanResults,
           device.id: device,

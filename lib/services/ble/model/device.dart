@@ -7,26 +7,27 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 class BleClient {
   BleClient({
     required DiscoveredDevice device,
-    required QualifiedCharacteristic rx,
     required Stream<ConnectionStateUpdate> lifeline,
   })  : _device = device,
-        _rx = rx,
         _lifeline = lifeline.listen((_) {}),
         super();
 
   final DiscoveredDevice _device;
   DiscoveredDevice get device => _device;
 
-  final QualifiedCharacteristic _rx;
-  QualifiedCharacteristic get rx => _rx;
+  // final QualifiedCharacteristic _rx;
+  // QualifiedCharacteristic get rx => _rx;
 
   final StreamSubscription<ConnectionStateUpdate> _lifeline;
 
   late final Stream<List<int>> _rxStream;
   late final int _mtu;
 
-  void initializeCommunications(Stream<List<int>> rxStream, int mtu) {
-    _rxStream = rxStream;
+  void initializeCommunications(
+    // Stream<List<int>> rxStream,
+    int mtu,
+  ) {
+    // _rxStream = rxStream;
     _mtu = mtu;
   }
 
