@@ -25,7 +25,9 @@ class BleStateCubit extends Cubit<BleState> {
   Future<void> _onStateChanged(BleStatus update) async {
     Log.d('BLE STATE CHANGED: $update');
 
-    if (update == BleStatus.ready) {
+    if (update == BleStatus.unknown) {
+      // Unknown is used as default state before real value is computed so we ignore
+    } else if (update == BleStatus.ready) {
       emit(const BleState.ready());
     } else {
       emit(BleState.error(errorState: update));

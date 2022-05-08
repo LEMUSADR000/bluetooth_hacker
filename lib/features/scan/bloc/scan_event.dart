@@ -7,4 +7,8 @@ class ScanEvent with _$ScanEvent {
   }) = StartScan;
 
   const factory ScanEvent.stopScan() = StopScan;
+
+  const factory ScanEvent.resultReceived({
+    required DiscoveredDevice device,
+  }) = _ResultReceived;
 }

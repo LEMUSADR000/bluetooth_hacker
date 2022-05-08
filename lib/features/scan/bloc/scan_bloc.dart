@@ -19,6 +19,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
         super(const ScanState.notScanning()) {
     on<StartScan>(_startScan);
     on<StopScan>(_stopScan);
+    on<_ResultReceived>(_resultReceived);
   }
 
   Future<void> _startScan(StartScan event, Emitter<ScanState> emit) async {
@@ -30,19 +31,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     try {
       _scanResultsSubscription = _ble
           .startScan(services: event.services.map(Uuid.parse).toList())
-          .listen((device) {
-        final Map<String, DiscoveredDevice> discovered = {
-          ...state.scanResults,
-          device.id: device,
-        };
-
-        final List<String> ids = [...state.ids, device.id];
-
-        emit(ScanState.scanning(
-          scanResults: discovered,
-          ids: ids,
-        ));
-      });
+          .listen(_onScanResultReceived);
     } catch (e, stacktrace) {
       Log.e('Unable to start scan $e', stackTrace: stacktrace);
       emit(ScanState.notScanning(
@@ -63,6 +52,40 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       scanResults: state.scanResults,
       ids: state.ids,
     ));
+  }
+
+  Future<void> _resultReceived(
+    _ResultReceived event,
+    Emitter<ScanState> emit,
+  ) async {
+    try {
+      final DiscoveredDevice device = event.device;
+
+      final List<String> ids = state.scanResults[device.id] == null
+          ? [...state.ids, device.id]
+          : state.ids;
+
+      final Map<String, DiscoveredDevice> discovered = {
+        ...state.scanResults,
+        device.id: device,
+      };
+
+      emit(ScanState.scanning(
+        scanResults: discovered,
+        ids: ids,
+      ));
+    } catch (e, stacktrace) {
+      Log.e(
+        'Exception occurred when emitting discovered device $e',
+        stackTrace: stacktrace,
+      );
+    }
+  }
+
+  void _onScanResultReceived(DiscoveredDevice device) {
+    if (device.name != '') {
+      add(ScanEvent.resultReceived(device: device));
+    }
   }
 
   @override

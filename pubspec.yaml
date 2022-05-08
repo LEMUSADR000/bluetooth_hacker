@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.0.1 # widgets that make it easy to implement the BLoC design pattern
   flutter_platform_widgets: ^1.20.0 # Platform aware widgets
+  implicitly_animated_reorderable_list: ^0.4.2 # Implicitly animated list
 
   # SERVICES
   flutter_reactive_ble: ^5.0.2 # BLE operations for multiple devices
@@ -29,7 +30,7 @@ dependencies:
   freezed: ^2.0.2 # Code generator for data-classes/unions/pattern-matching/cloning
   flutter_native_splash: ^2.1.6 # Native splash screen generator
   flutter_screenutil: ^5.5.1 # Adaptive screen and font size plugin
-  google_fonts: ^2.3.2
+  google_fonts: ^2.3.2 # Fonts from Google's resources
 
   # TESTING
   # mocktail: ^0.3.0 # mock library inspired by mockito
