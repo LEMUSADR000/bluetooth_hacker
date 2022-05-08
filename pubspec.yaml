@@ -15,7 +15,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.0.1 # widgets that make it easy to implement the BLoC design pattern
   flutter_platform_widgets: ^1.20.0 # Platform aware widgets
-  implicitly_animated_reorderable_list: ^0.4.2 # Implicitly animated list
 
   # SERVICES
   flutter_reactive_ble: ^5.0.2 # BLE operations for multiple devices
