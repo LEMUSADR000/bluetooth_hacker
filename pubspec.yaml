@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.0.1 # widgets that make it easy to implement the BLoC design pattern
   flutter_platform_widgets: ^1.20.0 # Platform aware widgets
+  custom_refresh_indicator: ^1.1.1 # Customized refresh indicators
 
   # SERVICES
   flutter_reactive_ble: ^5.0.2 # BLE operations for multiple devices

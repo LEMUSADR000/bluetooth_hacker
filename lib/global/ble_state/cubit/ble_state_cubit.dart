@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:bluetooth_hacker/services/ble/i_ble.dart';
 import 'package:bluetooth_hacker/utils/log.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -25,12 +26,13 @@ class BleStateCubit extends Cubit<BleState> {
   Future<void> _onStateChanged(BleStatus update) async {
     Log.d('BLE STATE CHANGED: $update');
 
-    if (update == BleStatus.unknown) {
+    if (update != BleStatus.unknown) {
       // Unknown is used as default state before real value is computed so we ignore
-    } else if (update == BleStatus.ready) {
-      emit(const BleState.ready());
-    } else {
-      emit(BleState.error(errorState: update));
+      if (update == BleStatus.ready) {
+        emit(const BleState.ready());
+      } else {
+        emit(BleState.error(errorState: update));
+      }
     }
   }
 

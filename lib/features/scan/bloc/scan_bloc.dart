@@ -11,6 +11,8 @@ part 'scan_event.dart';
 part 'scan_state.dart';
 
 class ScanBloc extends Bloc<ScanEvent, ScanState> {
+  static const Duration exitDuration = Duration(milliseconds: 250);
+
   final Ble _ble;
   StreamSubscription<DiscoveredDevice>? _scanResultsSubscription;
 
@@ -19,21 +21,25 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
         super(const ScanState.notScanning()) {
     on<StartScan>(_startScan);
     on<StopScan>(_stopScan);
+    on<ResetScan>(_resetScan);
     on<_ResultReceived>(_resultReceived);
   }
 
   Future<void> _startScan(StartScan event, Emitter<ScanState> emit) async {
-    if (_scanResultsSubscription != null) {
-      _scanResultsSubscription?.cancel();
-      _scanResultsSubscription = null;
-    }
-
     try {
+      if (_scanResultsSubscription != null) {
+        _scanResultsSubscription?.cancel();
+        _scanResultsSubscription = null;
+      }
+
       _scanResultsSubscription = _ble
           .startScan(services: event.services.map(Uuid.parse).toList())
           .listen(_onScanResultReceived);
+
+      emit(const ScanState.scanning(scanResults: {}, ids: []));
     } catch (e, stacktrace) {
       Log.e('Unable to start scan $e', stackTrace: stacktrace);
+
       emit(ScanState.notScanning(
         scanResults: state.scanResults,
         ids: state.ids,
@@ -52,6 +58,27 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       scanResults: state.scanResults,
       ids: state.ids,
     ));
+  }
+
+  Future<void> _resetScan(ResetScan event, Emitter<ScanState> emit) async {
+    try {
+      emit(ScanState.clearingScanResults(
+        scanResults: state.scanResults,
+        ids: state.ids,
+      ));
+
+      await _scanResultsSubscription?.cancel();
+      await Future.delayed(exitDuration, () {});
+
+      add(ScanEvent.startScan(services: event.services));
+    } catch (e, stacktrace) {
+      Log.e('Unable to reset scan $e', stackTrace: stacktrace);
+
+      emit(ScanState.notScanning(
+        scanResults: state.scanResults,
+        ids: state.ids,
+      ));
+    }
   }
 
   Future<void> _resultReceived(
@@ -79,6 +106,11 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
         'Exception occurred when emitting discovered device $e',
         stackTrace: stacktrace,
       );
+
+      emit(ScanState.notScanning(
+        scanResults: state.scanResults,
+        ids: state.ids,
+      ));
     }
   }
 
