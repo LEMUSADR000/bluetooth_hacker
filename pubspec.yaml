@@ -16,6 +16,7 @@ dependencies:
   flutter_bloc: ^8.0.1 # widgets that make it easy to implement the BLoC design pattern
   flutter_platform_widgets: ^1.20.0 # Platform aware widgets
   custom_refresh_indicator: ^1.1.1 # Customized refresh indicators
+  implicitly_animated_reorderable_list: ^0.4.2 # list with animate in/out callbacks
 
   # SERVICES
   flutter_reactive_ble: ^5.0.2 # BLE operations for multiple devices
@@ -31,6 +32,7 @@ dependencies:
   flutter_native_splash: ^2.1.6 # Native splash screen generator
   flutter_screenutil: ^5.5.1 # Adaptive screen and font size plugin
   google_fonts: ^2.3.2 # Fonts from Google's resources
+  uuid: ^3.0.6 # Rich UUID
 
   # TESTING
   # mocktail: ^0.3.0 # mock library inspired by mockito

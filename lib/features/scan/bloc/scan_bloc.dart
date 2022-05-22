@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bluetooth_hacker/features/scan/model/scanning_options.dart';
 import 'package:bluetooth_hacker/services/ble/i_ble.dart';
 import 'package:bluetooth_hacker/utils/log.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,16 +34,21 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       }
 
       _scanResultsSubscription = _ble
-          .startScan(services: event.services.map(Uuid.parse).toList())
+          .startScan(services: event.options.services.map(Uuid.parse).toList())
           .listen(_onScanResultReceived);
 
-      emit(const ScanState.scanning(scanResults: {}, ids: []));
+      emit(ScanState.scanning(
+        scanResults: {},
+        ids: [],
+        options: event.options,
+      ));
     } catch (e, stacktrace) {
       Log.e('Unable to start scan $e', stackTrace: stacktrace);
 
       emit(ScanState.notScanning(
         scanResults: state.scanResults,
         ids: state.ids,
+        options: event.options,
       ));
     }
   }
@@ -57,6 +63,7 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     emit(ScanState.notScanning(
       scanResults: state.scanResults,
       ids: state.ids,
+      options: state.options,
     ));
   }
 
@@ -65,18 +72,19 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       emit(ScanState.clearingScanResults(
         scanResults: state.scanResults,
         ids: state.ids,
+        options: state.options,
       ));
 
       await _scanResultsSubscription?.cancel();
-      await Future.delayed(exitDuration, () {});
 
-      add(ScanEvent.startScan(services: event.services));
+      add(ScanEvent.startScan(options: state.options));
     } catch (e, stacktrace) {
       Log.e('Unable to reset scan $e', stackTrace: stacktrace);
 
       emit(ScanState.notScanning(
         scanResults: state.scanResults,
         ids: state.ids,
+        options: state.options,
       ));
     }
   }
@@ -88,18 +96,36 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
     try {
       final DiscoveredDevice device = event.device;
 
-      final List<String> ids = state.scanResults[device.id] == null
-          ? [...state.ids, device.id]
-          : state.ids;
-
       final Map<String, DiscoveredDevice> discovered = {
         ...state.scanResults,
         device.id: device,
       };
 
+      final List<DiscoveredDevice> devices =
+          discovered.values.toList(growable: false);
+
+      switch (state.options.sorting) {
+        case ScanSorting.rssi:
+          devices.sort((a, b) => a.rssi.compareTo(b.rssi));
+          break;
+        case ScanSorting.name:
+          devices.sort((a, b) => a.name.compareTo(b.name));
+          break;
+        default:
+          break;
+      }
+
+      final List<String> orderedIds =
+          (state.options.direction == ScanSortingDirection.ascending
+                  ? devices
+                  : devices.reversed)
+              .map((e) => e.id)
+              .toList(growable: false);
+
       emit(ScanState.scanning(
         scanResults: discovered,
-        ids: ids,
+        ids: orderedIds,
+        options: state.options,
       ));
     } catch (e, stacktrace) {
       Log.e(
@@ -110,12 +136,20 @@ class ScanBloc extends Bloc<ScanEvent, ScanState> {
       emit(ScanState.notScanning(
         scanResults: state.scanResults,
         ids: state.ids,
+        options: state.options,
       ));
     }
   }
 
   void _onScanResultReceived(DiscoveredDevice device) {
-    if (device.name != '') {
+    final ScanningOptions options = state.options;
+
+    bool addScanResult = true;
+    if (options.ignoreNoName) {
+      addScanResult = device.name != '';
+    }
+
+    if (addScanResult) {
       add(ScanEvent.resultReceived(device: device));
     }
   }

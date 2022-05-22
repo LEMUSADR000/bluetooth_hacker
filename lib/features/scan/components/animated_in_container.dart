@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AnimatedInContainer extends StatefulWidget {
-  const AnimatedInContainer({required this.builder, Key? key})
-      : super(key: key);
+  const AnimatedInContainer({
+    required this.id,
+    required this.builder,
+    Key? key,
+  }) : super(key: key);
+
+  final String id;
   final WidgetBuilder builder;
 
   @override
@@ -38,7 +43,8 @@ class _AnimatedInContainerState extends State<AnimatedInContainer>
   Widget build(BuildContext context) {
     return BlocListener<ScanBloc, ScanState>(
       listener: (_, state) {
-        if (state is ClearingScanResults) {
+        if (state is ClearingScanResults ||
+            !state.scanResults.containsKey(widget.id)) {
           _animationController
             ..stop(canceled: false)
             ..animateTo(-1, duration: ScanBloc.exitDuration);

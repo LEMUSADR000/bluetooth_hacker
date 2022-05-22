@@ -5,9 +5,7 @@ import 'package:bluetooth_hacker/services/ble/model/device.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class ConcreteBle implements Ble {
-  ConcreteBle({
-    required FlutterReactiveBle ble,
-  }) : _flutterReactiveBle = ble;
+  ConcreteBle({required FlutterReactiveBle ble}) : _flutterReactiveBle = ble;
 
   // Private Fields
   final FlutterReactiveBle _flutterReactiveBle;
