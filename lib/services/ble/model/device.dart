@@ -23,13 +23,13 @@ class BleClient {
   late final Stream<List<int>> _rxStream;
   late final int _mtu;
 
-  void initializeCommunications(
-    // Stream<List<int>> rxStream,
-    int mtu,
-  ) {
-    // _rxStream = rxStream;
-    _mtu = mtu;
-  }
+  // void initializeCommunications(
+  //   // Stream<List<int>> rxStream,
+  //   int mtu,
+  // ) {
+  //   // _rxStream = rxStream;
+  //   _mtu = mtu;
+  // }
 
   Future<void> killClient() async {
     await _lifeline.cancel();

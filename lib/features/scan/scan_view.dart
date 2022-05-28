@@ -26,9 +26,6 @@ class ScanView extends StatelessWidget {
       iosContentBottomPadding: true,
       appBar: PlatformAppBar(
         title: const Text('Scan View'),
-        material: (_, __) => MaterialAppBarData(
-          shape: const RoundedRectangleBorder(),
-        ),
         cupertino: (_, __) => CupertinoNavigationBarData(
           border: const Border(),
         ),
@@ -45,19 +42,25 @@ class ScanView extends StatelessWidget {
             return true;
           },
           builder: (_, state) {
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 350),
-              child: state.maybeWhen(
-                initializing: () => const LoadingWidget(),
-                ready: () => const Results(),
-                missingRequirement: (permissions, services) =>
-                    MissingRequirementModal(
-                  permissions: permissions,
-                  service: services,
+            return Column(
+              children: [
+                Flexible(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    child: state.maybeWhen(
+                      initializing: () => const LoadingWidget(),
+                      ready: () => const Results(),
+                      missingRequirement: (permissions, services) =>
+                          MissingRequirementModal(
+                        permissions: permissions,
+                        service: services,
+                      ),
+                      error: (status) => ErrorModal(status: status),
+                      orElse: () => const SizedBox.shrink(),
+                    ),
+                  ),
                 ),
-                error: (status) => ErrorModal(status: status),
-                orElse: () => const SizedBox.shrink(),
-              ),
+              ],
             );
           },
         ),

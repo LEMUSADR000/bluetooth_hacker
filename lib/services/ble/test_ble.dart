@@ -8,7 +8,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:uuid/uuid.dart' as uuid;
 
 class TestBle implements Ble {
-  static const int _scanCap = 15;
+  static const int _scanCap = 5;
 
   @override
   BleClient connectToDevice(
@@ -41,8 +41,8 @@ class TestBle implements Ble {
         final String gen = const uuid.Uuid().v4();
 
         return DiscoveredDevice(
-          id: '#$seed',
-          name: gen,
+          id: gen,
+          name: gen.substring(0, 5),
           serviceData: const {},
           manufacturerData: Uint8List.fromList([]),
           rssi: rssi,

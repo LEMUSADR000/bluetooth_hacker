@@ -13,11 +13,11 @@ class ScanConfigurationDropdown extends StatefulWidget {
   final WidgetBuilder builder;
 
   @override
-  _ScanConfigurationDropdownState createState() =>
-      _ScanConfigurationDropdownState();
+  ScanConfigurationDropdownState createState() =>
+      ScanConfigurationDropdownState();
 }
 
-class _ScanConfigurationDropdownState extends State<ScanConfigurationDropdown>
+class ScanConfigurationDropdownState extends State<ScanConfigurationDropdown>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,

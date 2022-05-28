@@ -30,7 +30,7 @@ class ConcreteBle implements Ble {
       mtu: 247,
     );
 
-    client.initializeCommunications(mtu);
+    // client.initializeCommunications(mtu);
   }
 
   @override
